@@ -229,6 +229,8 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
      */
     private volatile boolean useEcc = false;
 
+    private volatile boolean useDirect = false;
+
     /**
      * Resolver to use when resolving hostnames to IP addresses. This is a bridge between {@link org.littleshoot.proxy.HostResolver} and
      * {@link net.lightbody.bmp.proxy.dns.AdvancedHostResolver}. It allows the resolvers to be changed on-the-fly without re-bootstrapping the
@@ -304,11 +306,15 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
                 .withConnectTimeout(connectTimeoutMs)
                 .withIdleConnectionTimeout(idleConnectionTimeoutSec)
                 .withProxyAlias(VIA_HEADER_ALIAS);
+                
 
         if (serverBindAddress != null) {
             bootstrap.withNetworkInterface(new InetSocketAddress(serverBindAddress, 0));
         }
 
+        if (useDirect) {
+            bootstrap.withDirectResolutionEnabled(true);
+        }
 
         if (!mitmDisabled) {
             if (mitmManager == null) {
@@ -1028,6 +1034,10 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 
     public void setUseEcc(boolean useEcc) {
         this.useEcc = useEcc;
+    }
+
+    public void setUseDirect(boolean useDirect) {
+        this.useDirect = useDirect;
     }
 
     /**

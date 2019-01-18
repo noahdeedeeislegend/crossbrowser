@@ -1,4 +1,4 @@
-package net.lightbody.bmp.proxy;
+    package net.lightbody.bmp.proxy;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -131,7 +131,7 @@ public class ProxyManager {
         }
     }
 
-    public LegacyProxyServer create(Map<String, String> options, Integer port, String bindAddr, String serverBindAddr, boolean useEcc, boolean trustAllServers) {
+    public LegacyProxyServer create(Map<String, String> options, Integer port, String bindAddr, String serverBindAddr, boolean useEcc, boolean trustAllServers, boolean useDirect) {
         LOG.debug("Instantiate ProxyServer...");
         LegacyProxyServer proxy = proxyServerProvider.get();
 
@@ -148,6 +148,12 @@ public class ProxyManager {
         if (trustAllServers) {
             if (proxy instanceof BrowserMobProxyServer) {
                 ((BrowserMobProxyServer) proxy).setTrustAllServers(true);
+            }
+        }
+
+        if (useDirect) {
+            if (proxy instanceof BrowserMobProxyServer) {
+                ((BrowserMobProxyServer) proxy).setUseDirect(true);
             }
         }
 
@@ -205,24 +211,28 @@ public class ProxyManager {
         throw new ProxyPortsExhaustedException();
     }
 
+    public LegacyProxyServer create(Map<String, String> options, Integer port, String bindAddr, boolean useEcc, boolean trustAllServers, boolean useDirect) {
+        return create(options, port, null, null, false, false, useDirect);
+    }
+
     public LegacyProxyServer create(Map<String, String> options, Integer port, String bindAddr, boolean useEcc, boolean trustAllServers) {
-        return create(options, port, null, null, false, false);
+        return create(options, port, null, null, false, false, false);
     }
 
     public LegacyProxyServer create(Map<String, String> options, Integer port) {
-        return create(options, port, null, null, false, false);
+        return create(options, port, null, null, false, false, false);
     }
 
     public LegacyProxyServer create(Map<String, String> options) {
-        return create(options, null, null, null, false, false);
+        return create(options, null, null, null, false, false, false);
     }
 
     public LegacyProxyServer create() {
-        return create(null, null, null, null, false, false);
+        return create(null, null, null, null, false, false, false);
     }
 
     public LegacyProxyServer create(int port) {
-        return create(null, port, null, null, false, false);
+        return create(null, port, null, null, false, false, false);
     }
 
     public LegacyProxyServer get(int port) {

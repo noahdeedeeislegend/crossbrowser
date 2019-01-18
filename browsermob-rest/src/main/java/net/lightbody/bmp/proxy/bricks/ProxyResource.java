@@ -103,11 +103,19 @@ public class ProxyResource {
         String trustAllServersString = request.param("trustAllServers");
         boolean trustAllServers = Boolean.parseBoolean(trustAllServersString);
 
+        String useDirectString = request.param("direct");
+        boolean useDirect = false;
+        if (httpProxy != null && useDirectString != null) {
+            useDirect = Boolean.parseBoolean(useDirectString);
+        }
+
+        System.out.println("Chase -> useDirect is " + useDirect);
+
         LOG.debug("POST proxy instance on bindAddress `{}` & port `{}` & serverBindAddress `{}`",
                 paramBindAddr, paramPort, paramServerBindAddr);
         LegacyProxyServer proxy;
         try {
-            proxy = proxyManager.create(options, paramPort, paramBindAddr, paramServerBindAddr, useEcc, trustAllServers);
+            proxy = proxyManager.create(options, paramPort, paramBindAddr, paramServerBindAddr, useEcc, trustAllServers, useDirect);
         } catch (ProxyExistsException ex) {
             return Reply.with(new ProxyDescriptor(ex.getPort())).status(455).as(Json.class);
         } catch (ProxyPortsExhaustedException ex) {
