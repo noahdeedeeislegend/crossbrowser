@@ -450,6 +450,12 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
         return serverBindAddress;
     }
 
+    public void setIsDirectResolutionEnabled(boolean useDirect) {
+        if (proxyServer instanceof DefaultHttpProxyServer) {
+            ((DefaultHttpProxyServer)proxyServer).setIsDirectResolutionEnabled(useDirect);    
+        }
+    }
+
     @Override
     public Har getHar() {
         return har;

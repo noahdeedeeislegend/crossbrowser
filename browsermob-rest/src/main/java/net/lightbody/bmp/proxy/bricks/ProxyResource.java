@@ -128,6 +128,25 @@ public class ProxyResource {
         return Reply.with(new ProxyDescriptor(proxy.getPort())).as(Json.class);
     }
 
+    @Put
+    @At("/:port/direct")
+    public Reply<?> setDirect(@Named("port") int port, Request<String> request) {
+        LegacyProxyServer proxy = proxyManager.get(port);
+        if (proxy == null) {
+            return Reply.saying().notFound();
+        }
+
+        String useDirectString = request.param("direct");
+        boolean useDirect = Boolean.parseBoolean(useDirectString);
+        System.out.println("Chase -> useDirect is " + useDirect);
+
+        if (proxy instanceof BrowserMobProxyServer) {
+            ((BrowserMobProxyServer)proxy).setIsDirectResolutionEnabled(useDirect);
+        }
+
+        return Reply.saying().ok();
+    }
+
     @Get
     @At("/:port/har")
     public Reply<?> getHar(@Named("port") int port) {
