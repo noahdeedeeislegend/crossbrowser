@@ -146,9 +146,14 @@ public class ProxyManager {
         }
 
         if (trustAllServers) {
+            System.out.println("trustAllServers is true");
             if (proxy instanceof BrowserMobProxyServer) {
+                System.out.println("Going to trust all servers");
                 ((BrowserMobProxyServer) proxy).setTrustAllServers(true);
             }
+        } else {
+            System.out.println("Disabling mitm");
+            ((BrowserMobProxyServer) proxy).setMitmDisabled(true);
         }
 
         if (useDirect) {
