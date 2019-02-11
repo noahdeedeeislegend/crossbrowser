@@ -229,6 +229,8 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
      */
     private volatile boolean useEcc = false;
 
+    private volatile boolean useDirect = false;
+
     /**
      * Resolver to use when resolving hostnames to IP addresses. This is a bridge between {@link org.littleshoot.proxy.HostResolver} and
      * {@link net.lightbody.bmp.proxy.dns.AdvancedHostResolver}. It allows the resolvers to be changed on-the-fly without re-bootstrapping the
@@ -304,11 +306,15 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
                 .withConnectTimeout(connectTimeoutMs)
                 .withIdleConnectionTimeout(idleConnectionTimeoutSec)
                 .withProxyAlias(VIA_HEADER_ALIAS);
+                
 
         if (serverBindAddress != null) {
             bootstrap.withNetworkInterface(new InetSocketAddress(serverBindAddress, 0));
         }
 
+        if (useDirect) {
+            bootstrap.withDirectResolutionEnabled(true);
+        }
 
         if (!mitmDisabled) {
             if (mitmManager == null) {
@@ -442,6 +448,12 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
     @Override
     public InetAddress getServerBindAddress() {
         return serverBindAddress;
+    }
+
+    public void setIsDirectResolutionEnabled(boolean useDirect) {
+        if (proxyServer instanceof DefaultHttpProxyServer) {
+            ((DefaultHttpProxyServer)proxyServer).setIsDirectResolutionEnabled(useDirect);    
+        }
     }
 
     @Override
@@ -1004,10 +1016,15 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
             throw new IllegalStateException("Cannot disable upstream server verification after the proxy has been started");
         }
 
+        System.out.println("trustAllServers is " + trustAllServers);
+
         if (trustAllServers) {
+            System.out.println("trustAllServers was true, setting trustSource to null");
             trustSource = null;
         } else {
+            System.out.println("trustAllServers was false, going to check what trustSource is");
             if (trustSource == null) {
+                System.out.println("trustSource was null, setting it to defaultTrustSource");
                 trustSource = TrustSource.defaultTrustSource();
             }
         }
@@ -1028,6 +1045,10 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 
     public void setUseEcc(boolean useEcc) {
         this.useEcc = useEcc;
+    }
+
+    public void setUseDirect(boolean useDirect) {
+        this.useDirect = useDirect;
     }
 
     /**

@@ -103,11 +103,19 @@ public class ProxyResource {
         String trustAllServersString = request.param("trustAllServers");
         boolean trustAllServers = Boolean.parseBoolean(trustAllServersString);
 
+        String useDirectString = request.param("direct");
+        boolean useDirect = false;
+        if (httpProxy != null && useDirectString != null) {
+            useDirect = Boolean.parseBoolean(useDirectString);
+        }
+
+        System.out.println("Chase -> useDirect is " + useDirect);
+
         LOG.debug("POST proxy instance on bindAddress `{}` & port `{}` & serverBindAddress `{}`",
                 paramBindAddr, paramPort, paramServerBindAddr);
         LegacyProxyServer proxy;
         try {
-            proxy = proxyManager.create(options, paramPort, paramBindAddr, paramServerBindAddr, useEcc, trustAllServers);
+            proxy = proxyManager.create(options, paramPort, paramBindAddr, paramServerBindAddr, useEcc, trustAllServers, useDirect);
         } catch (ProxyExistsException ex) {
             return Reply.with(new ProxyDescriptor(ex.getPort())).status(455).as(Json.class);
         } catch (ProxyPortsExhaustedException ex) {
@@ -118,6 +126,25 @@ public class ProxyResource {
             return Reply.with(s).as(Text.class).status(550);
         }
         return Reply.with(new ProxyDescriptor(proxy.getPort())).as(Json.class);
+    }
+
+    @Put
+    @At("/:port/direct")
+    public Reply<?> setDirect(@Named("port") int port, Request<String> request) {
+        LegacyProxyServer proxy = proxyManager.get(port);
+        if (proxy == null) {
+            return Reply.saying().notFound();
+        }
+
+        String useDirectString = request.param("direct");
+        boolean useDirect = Boolean.parseBoolean(useDirectString);
+        System.out.println("Chase -> useDirect is " + useDirect);
+
+        if (proxy instanceof BrowserMobProxyServer) {
+            ((BrowserMobProxyServer)proxy).setIsDirectResolutionEnabled(useDirect);
+        }
+
+        return Reply.saying().ok();
     }
 
     @Get
