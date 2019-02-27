@@ -1016,15 +1016,15 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
             throw new IllegalStateException("Cannot disable upstream server verification after the proxy has been started");
         }
 
-        System.out.println("trustAllServers is " + trustAllServers);
+        log.debug("trustAllServers is " + trustAllServers);
 
         if (trustAllServers) {
-            System.out.println("trustAllServers was true, setting trustSource to null");
+            log.debug("trustAllServers was true, setting trustSource to null");
             trustSource = null;
         } else {
-            System.out.println("trustAllServers was false, going to check what trustSource is");
+            log.debug("trustAllServers was false, going to check what trustSource is");
             if (trustSource == null) {
-                System.out.println("trustSource was null, setting it to defaultTrustSource");
+                log.debug("trustSource was null, setting it to defaultTrustSource");
                 trustSource = TrustSource.defaultTrustSource();
             }
         }

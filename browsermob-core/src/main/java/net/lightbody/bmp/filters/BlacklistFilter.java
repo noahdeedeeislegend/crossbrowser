@@ -38,11 +38,13 @@ public class BlacklistFilter extends HttpsAwareFiltersAdapter {
             String url = getFullUrl(httpRequest);
 
             for (BlacklistEntry entry : blacklistedUrls) {
-                if (HttpMethod.CONNECT.equals(httpRequest.getMethod()) && entry.getHttpMethodPattern() == null) {
-                    // do not allow CONNECTs to be blacklisted unless a method pattern is explicitly specified
-                    continue;
-                }
+                // this makes no sense given the context of the if below (in my opinion)..
 
+                // if (HttpMethod.CONNECT.equals(httpRequest.getMethod()) && entry.getHttpMethodPattern() == null) {
+                //     // do not allow CONNECTs to be blacklisted unless a method pattern is explicitly specified
+                //     System.out.println("We're in here.");
+                //     continue;
+                // }
                 if (entry.matches(url, httpRequest.getMethod().name())) {
                     HttpResponseStatus status = HttpResponseStatus.valueOf(entry.getStatusCode());
                     HttpResponse resp = new DefaultFullHttpResponse(httpRequest.getProtocolVersion(), status);

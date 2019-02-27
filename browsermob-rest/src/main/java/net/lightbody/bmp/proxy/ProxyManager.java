@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class ProxyManager {
-    private static final Logger LOG = LoggerFactory.getLogger(ProxyManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProxyManager.class );
 
     private int lastPort;
     private final int minPort;
@@ -146,13 +146,13 @@ public class ProxyManager {
         }
 
         if (trustAllServers) {
-            System.out.println("trustAllServers is true");
+            LOG.debug("trustAllServers is true");
             if (proxy instanceof BrowserMobProxyServer) {
-                System.out.println("Going to trust all servers");
+                LOG.debug("Going to trust all servers");
                 ((BrowserMobProxyServer) proxy).setTrustAllServers(true);
             }
         } else {
-            System.out.println("Disabling mitm");
+            LOG.debug("Disabling mitm");
             ((BrowserMobProxyServer) proxy).setMitmDisabled(true);
         }
 

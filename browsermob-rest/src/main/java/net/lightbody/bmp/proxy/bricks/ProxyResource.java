@@ -109,7 +109,7 @@ public class ProxyResource {
             useDirect = Boolean.parseBoolean(useDirectString);
         }
 
-        System.out.println("Chase -> useDirect is " + useDirect);
+        LOG.debug("Chase -> useDirect is " + useDirect);
 
         LOG.debug("POST proxy instance on bindAddress `{}` & port `{}` & serverBindAddress `{}`",
                 paramBindAddr, paramPort, paramServerBindAddr);
@@ -138,7 +138,7 @@ public class ProxyResource {
 
         String useDirectString = request.param("direct");
         boolean useDirect = Boolean.parseBoolean(useDirectString);
-        System.out.println("Chase -> useDirect is " + useDirect);
+        LOG.debug("Chase -> useDirect is " + useDirect);
 
         if (proxy instanceof BrowserMobProxyServer) {
             ((BrowserMobProxyServer)proxy).setIsDirectResolutionEnabled(useDirect);
